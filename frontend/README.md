@@ -1,75 +1,93 @@
-# React + TypeScript + Vite
+# doneIt Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend application for doneIt, a productivity-focused task management app designed to help users organize work, track progress, and stay focused.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The frontend provides the user-facing interface for the application, including:
 
-## React Compiler
+- Task dashboards and lists
+- User authentication screens
+- Task creation, editing, and completion flows
+- Responsive layouts for desktop and mobile devices
+- Integration with the backend API
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+This frontend is built with a modern web stack, including:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React
+- TypeScript
+- Vite
+- CSS or Tailwind CSS
+- React Router
+- Axios or fetch-based API calls
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Project Structure
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+frontend/
+├── public/             # Static assets
+├── src/
+│   ├── components/    # Reusable UI components
+│   ├── pages/         # Screen-level views
+│   ├── hooks/         # Custom hooks
+│   ├── services/      # API integration
+│   ├── context/       # App-level state providers
+│   ├── styles/        # Global styles and theme
+│   ├── App.tsx        # Root app component
+│   └── main.tsx       # Application entry point
+├── .env.example       # Example environment variables
+├── package.json       # Scripts and dependencies
+├── vite.config.ts     # Vite configuration
+└── README.md          # Project documentation
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Install dependencies:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
 ```
+
+2. Configure environment variables:
+
+```bash
+cp .env.example .env.local
+```
+
+3. Start the development server:
+
+```bash
+npm run dev
+```
+
+4. Open the local URL shown in the terminal to view the app.
+
+## Available Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Create production build
+npm run preview  # Preview production build locally
+npm run lint     # Run lint checks
+```
+
+## Environment Variables
+
+Create a `.env.local` file with values such as:
+
+```bash
+VITE_API_BASE_URL=http://localhost:5000
+```
+
+Adjust the variable names to match your backend configuration.
+
+## Contributing
+
+Contributions are welcome. Please make sure to keep the UI consistent, follow the existing project structure, and validate changes before submitting a pull request.
+
+## License
+
+This project is licensed under the MIT license unless otherwise specified.
