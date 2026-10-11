@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import TaskCard from "./TaskCard";
 import TaskEditPopup from "./TaskEditPopup";
-import type { Priority, TaskCardProps } from "./TaskCard";
+import TaskToolbar from "./TaskToolbar";
+import type { TaskCardProps } from "./TaskCard";
 
 export interface Task extends TaskCardProps {
   id: string;
@@ -10,9 +11,6 @@ export interface Task extends TaskCardProps {
 interface TaskListProps {
   initialTasks?: Task[];
 }
-
-type StatusFilter = "all" | "active" | "completed";
-type PriorityFilter = "all" | Priority;
 
 const sampleTasks: Task[] = [
   {
@@ -48,24 +46,8 @@ const sampleTasks: Task[] = [
   },
 ];
 
-const statusFilters: { value: StatusFilter; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "active", label: "Active" },
-  { value: "completed", label: "Completed" },
-];
-
-const priorityFilters: { value: PriorityFilter; label: string }[] = [
-  { value: "all", label: "All priorities" },
-  { value: "high", label: "High" },
-  { value: "medium", label: "Medium" },
-  { value: "low", label: "Low" },
-];
-
 const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [status, setStatus] = useState<StatusFilter>("all");
-  const [priority, setPriority] = useState<PriorityFilter>("all");
-  const [query, setQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -87,22 +69,6 @@ const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
     setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
-  const filteredTasks = useMemo(() => {
-    const search = query.trim().toLowerCase();
-    return tasks.filter((task) => {
-      if (status === "active" && task.completed) return false;
-      if (status === "completed" && !task.completed) return false;
-      if (priority !== "all" && (task.priority ?? "medium") !== priority) return false;
-      if (search) {
-        const haystack = [task.title, task.description ?? "", ...(task.tags ?? [])]
-          .join(" ")
-          .toLowerCase();
-        if (!haystack.includes(search)) return false;
-      }
-      return true;
-    });
-  }, [tasks, status, priority, query]);
-
   const editingTask = tasks.find((task) => task.id === editingId) ?? null;
 
   if (tasks.length === 0) {
@@ -115,64 +81,48 @@ const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+      <TaskToolbar title="Tasks">
+        {/* Placeholder tools — swap with TaskFilter / TaskSearch once implemented */}
         <div className="flex items-center gap-1 rounded-lg bg-gray-100 p-1">
-          {statusFilters.map((filter) => (
+          {["All", "Active", "Completed"].map((label) => (
             <button
-              key={filter.value}
+              key={label}
               type="button"
-              onClick={() => setStatus(filter.value)}
-              className={`rounded-md px-3 py-1 text-sm font-medium transition ${
-                status === filter.value
-                  ? "bg-white text-indigo-600 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
+              disabled
+              className="cursor-not-allowed rounded-md px-3 py-1 text-sm font-medium text-gray-400"
             >
-              {filter.label}
+              {label}
             </button>
           ))}
         </div>
-
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            disabled
             placeholder="Search tasks or tags..."
-            className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 sm:w-56"
+            className="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400 sm:w-56"
           />
           <select
-            value={priority}
-            onChange={(event) => setPriority(event.target.value as PriorityFilter)}
-            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            disabled
+            className="cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400"
           >
-            {priorityFilters.map((filter) => (
-              <option key={filter.value} value={filter.value}>
-                {filter.label}
-              </option>
-            ))}
+            <option>All priorities</option>
           </select>
         </div>
-      </div>
+      </TaskToolbar>
 
-      {filteredTasks.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400">
-          No tasks match your filters.
-        </p>
-      ) : (
-        <ul className="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredTasks.map((task) => (
-            <li key={task.id}>
-              <TaskCard
-                {...task}
-                onToggle={() => handleToggle(task.id)}
-                onEdit={() => handleEdit(task.id)}
-                onDelete={() => handleDelete(task.id)}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul className="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+        {tasks.map((task) => (
+          <li key={task.id}>
+            <TaskCard
+              {...task}
+              onToggle={() => handleToggle(task.id)}
+              onEdit={() => handleEdit(task.id)}
+              onDelete={() => handleDelete(task.id)}
+            />
+          </li>
+        ))}
+      </ul>
 
       {editingTask && (
         <TaskEditPopup
