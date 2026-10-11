@@ -1,6 +1,6 @@
-type Priority = "low" | "medium" | "high";
+export type Priority = "low" | "medium" | "high";
 
-interface TaskCardProps {
+export interface TaskCardProps {
   title: string;
   description?: string;
   priority?: Priority;
