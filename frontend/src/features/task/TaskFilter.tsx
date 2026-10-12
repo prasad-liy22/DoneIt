@@ -6,7 +6,6 @@ export type PriorityFilter = "all" | Priority;
 export interface TaskFilterValue {
   status: StatusFilter;
   priority: PriorityFilter;
-  query: string;
 }
 
 interface TaskFilterProps {
@@ -53,13 +52,13 @@ const TaskFilter = ({ value, onChange }: TaskFilterProps) => {
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        {/* Search placeholder — kept for a future TaskSearch integration */}
         <input
           type="search"
-          value={value.query}
-          onChange={(event) => update({ query: event.target.value })}
+          disabled
           placeholder="Search tasks or tags..."
           aria-label="Search tasks or tags"
-          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 sm:w-56"
+          className="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400 sm:w-56"
         />
         <select
           value={value.priority}
