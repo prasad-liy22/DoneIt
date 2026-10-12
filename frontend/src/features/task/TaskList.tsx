@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
-import TaskEditPopup from "./TaskEditPopup";
+import TaskForm from "./TaskForm";
 import TaskToolbar from "./TaskToolbar";
 import type { TaskFilterValue } from "./TaskFilter";
 import type { TaskCardProps } from "./TaskCard";
@@ -54,6 +54,7 @@ const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
     priority: "all",
     query: "",
   });
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -75,6 +76,11 @@ const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
     setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
+  const handleCreateTask = (values: TaskCardProps) => {
+    setTasks((prev) => [...prev, { id: crypto.randomUUID(), ...values }]);
+    setIsFormOpen(false);
+  };
+
   const filteredTasks = useMemo(() => {
     const search = filters.query.trim().toLowerCase();
     return tasks.filter((task) => {
@@ -93,19 +99,20 @@ const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
 
   const editingTask = tasks.find((task) => task.id === editingId) ?? null;
 
-  if (tasks.length === 0) {
-    return (
-      <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400">
-        No tasks yet.
-      </p>
-    );
-  }
-
   return (
     <div className="flex flex-col gap-4">
-      <TaskToolbar title="Tasks" value={filters} onChange={setFilters} />
+      <TaskToolbar
+        title="Tasks"
+        value={filters}
+        onChange={setFilters}
+        onCreateTask={() => setIsFormOpen(true)}
+      />
 
-      {filteredTasks.length === 0 ? (
+      {tasks.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400">
+          No tasks yet.
+        </p>
+      ) : filteredTasks.length === 0 ? (
         <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400">
           No tasks match your filters.
         </p>
@@ -125,11 +132,15 @@ const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
       )}
 
       {editingTask && (
-        <TaskEditPopup
+        <TaskForm
           task={editingTask}
-          onSave={(values) => handleSave(editingTask.id, values)}
+          onSubmit={(values) => handleSave(editingTask.id, values)}
           onClose={() => setEditingId(null)}
         />
+      )}
+
+      {isFormOpen && (
+        <TaskForm onSubmit={handleCreateTask} onClose={() => setIsFormOpen(false)} />
       )}
     </div>
   );
