@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
 import TaskEditPopup from "./TaskEditPopup";
-import TaskFilter from "./TaskFilter";
 import TaskToolbar from "./TaskToolbar";
 import type { TaskFilterValue } from "./TaskFilter";
 import type { TaskCardProps } from "./TaskCard";
@@ -104,9 +103,7 @@ const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <TaskToolbar title="Tasks">
-        <TaskFilter value={filters} onChange={setFilters} />
-      </TaskToolbar>
+      <TaskToolbar title="Tasks" value={filters} onChange={setFilters} />
 
       {filteredTasks.length === 0 ? (
         <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400">

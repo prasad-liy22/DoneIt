@@ -1,6 +1,7 @@
 import { useState } from "react";
 import TaskDeleteDialog from "./TaskDeleteDialog";
 import TaskPriorityBadge from "./TaskPriorityBadge";
+import TaskStatusBadge from "./TaskStatusBadge";
 
 export type Priority = "low" | "medium" | "high";
 
@@ -113,6 +114,7 @@ const TaskCard = ({
       </div>
 
       <div className="flex flex-wrap items-center gap-2 pl-2">
+        <TaskStatusBadge completed={completed} />
         <TaskPriorityBadge priority={priority} />
 
         {tags.map((tag) => (
