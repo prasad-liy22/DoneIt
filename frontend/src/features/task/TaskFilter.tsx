@@ -1,3 +1,4 @@
+import TaskSearch from "./TaskSearch";
 import type { Priority } from "./TaskCard";
 
 export type StatusFilter = "all" | "active" | "completed";
@@ -6,6 +7,7 @@ export type PriorityFilter = "all" | Priority;
 export interface TaskFilterValue {
   status: StatusFilter;
   priority: PriorityFilter;
+  query: string;
 }
 
 interface TaskFilterProps {
@@ -52,14 +54,7 @@ const TaskFilter = ({ value, onChange }: TaskFilterProps) => {
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        {/* Search placeholder — kept for a future TaskSearch integration */}
-        <input
-          type="search"
-          disabled
-          placeholder="Search tasks or tags..."
-          aria-label="Search tasks or tags"
-          className="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400 sm:w-56"
-        />
+        <TaskSearch value={value.query} onChange={(query) => update({ query })} />
         <select
           value={value.priority}
           onChange={(event) => update({ priority: event.target.value as PriorityFilter })}
