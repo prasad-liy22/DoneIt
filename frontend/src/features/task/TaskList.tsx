@@ -19,7 +19,7 @@ const sampleTasks: Task[] = [
     title: "Design the task board",
     description: "Lay out columns and card styles.",
     priority: "high",
-    dueDate: "Oct 15",
+    dueDate: "2026-10-15",
     tags: ["design", "ui"],
   },
   {
@@ -27,7 +27,7 @@ const sampleTasks: Task[] = [
     title: "Wire up drag and drop",
     description: "Move cards between columns.",
     priority: "medium",
-    dueDate: "Oct 18",
+    dueDate: "2026-10-18",
     tags: ["frontend"],
   },
   {
@@ -41,7 +41,7 @@ const sampleTasks: Task[] = [
     id: "4",
     title: "Set up CI pipeline",
     priority: "high",
-    dueDate: "Oct 12",
+    dueDate: "2026-10-12",
     tags: ["devops"],
     completed: true,
   },

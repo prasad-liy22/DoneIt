@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import DatePicker from "../../components/elements/DatePicker";
 import type { Priority, TaskCardProps } from "./TaskCard";
 
 interface TaskFormProps {
@@ -110,13 +111,7 @@ const TaskForm = ({ task, onSubmit, onClose }: TaskFormProps) => {
 
           <label className="flex flex-col gap-1 text-sm font-medium text-gray-700">
             Due date
-            <input
-              type="text"
-              value={dueDate}
-              onChange={(event) => setDueDate(event.target.value)}
-              placeholder="e.g. Oct 15"
-              className={inputClass}
-            />
+            <DatePicker value={dueDate || null} onChange={(date) => setDueDate(date ?? "")} />
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-medium text-gray-700">
