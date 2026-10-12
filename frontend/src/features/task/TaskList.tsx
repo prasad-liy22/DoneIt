@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
 import TaskEditPopup from "./TaskEditPopup";
+import TaskFilter from "./TaskFilter";
 import TaskToolbar from "./TaskToolbar";
+import type { TaskFilterValue } from "./TaskFilter";
 import type { TaskCardProps } from "./TaskCard";
 
 export interface Task extends TaskCardProps {
@@ -48,6 +50,11 @@ const sampleTasks: Task[] = [
 
 const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [filters, setFilters] = useState<TaskFilterValue>({
+    status: "all",
+    priority: "all",
+    query: "",
+  });
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
@@ -69,6 +76,22 @@ const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
     setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
+  const filteredTasks = useMemo(() => {
+    const search = filters.query.trim().toLowerCase();
+    return tasks.filter((task) => {
+      if (filters.status === "active" && task.completed) return false;
+      if (filters.status === "completed" && !task.completed) return false;
+      if (filters.priority !== "all" && (task.priority ?? "medium") !== filters.priority) return false;
+      if (search) {
+        const haystack = [task.title, task.description ?? "", ...(task.tags ?? [])]
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(search)) return false;
+      }
+      return true;
+    });
+  }, [tasks, filters]);
+
   const editingTask = tasks.find((task) => task.id === editingId) ?? null;
 
   if (tasks.length === 0) {
@@ -82,47 +105,27 @@ const TaskList = ({ initialTasks = sampleTasks }: TaskListProps) => {
   return (
     <div className="flex flex-col gap-4">
       <TaskToolbar title="Tasks">
-        {/* Placeholder tools — swap with TaskFilter / TaskSearch once implemented */}
-        <div className="flex items-center gap-1 rounded-lg bg-gray-100 p-1">
-          {["All", "Active", "Completed"].map((label) => (
-            <button
-              key={label}
-              type="button"
-              disabled
-              className="cursor-not-allowed rounded-md px-3 py-1 text-sm font-medium text-gray-400"
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <input
-            type="search"
-            disabled
-            placeholder="Search tasks or tags..."
-            className="w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400 sm:w-56"
-          />
-          <select
-            disabled
-            className="cursor-not-allowed rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-400"
-          >
-            <option>All priorities</option>
-          </select>
-        </div>
+        <TaskFilter value={filters} onChange={setFilters} />
       </TaskToolbar>
 
-      <ul className="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
-        {tasks.map((task) => (
-          <li key={task.id}>
-            <TaskCard
-              {...task}
-              onToggle={() => handleToggle(task.id)}
-              onEdit={() => handleEdit(task.id)}
-              onDelete={() => handleDelete(task.id)}
-            />
-          </li>
-        ))}
-      </ul>
+      {filteredTasks.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-400">
+          No tasks match your filters.
+        </p>
+      ) : (
+        <ul className="grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredTasks.map((task) => (
+            <li key={task.id}>
+              <TaskCard
+                {...task}
+                onToggle={() => handleToggle(task.id)}
+                onEdit={() => handleEdit(task.id)}
+                onDelete={() => handleDelete(task.id)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
 
       {editingTask && (
         <TaskEditPopup
